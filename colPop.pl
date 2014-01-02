@@ -36,18 +36,24 @@ sub processArgs
 sub generateHeader
 {
     my @output;
-    if ($HEADER_FROM_FILE)
+    if ($HEAD_FILE or $HEADER_FROM_FILE)
     {
-	$HEAD_FILE = $INPUT_FILE ;
-    }
-    if ($HEAD_FILE)
-    {
-	open (my $fh, '<', $HEAD_FILE) or die "Cannot open $HEAD_FILE\n";
-	my $line = <$fh>;
+	
+	$HEAD_FILE = $INPUT_FILE if ($HEADER_FROM_FILE);
+	my $line;
+	if ($HEAD_FILE)
+	{
+	    open (my $fh, '<', $HEAD_FILE) or die "Cannot open $HEAD_FILE\n";
+	    $line = <$fh>;
+	    close($fh);
+	}
+	else
+	{
+	    $line = <>;
+	}
 	chomp $line;
 	$line =~ s/\r//;
 	@output = split (/$SEPERATOR/, $line);
-	close($fh);
     }
     foreach ( @output )
     {
@@ -63,6 +69,7 @@ sub generateBody
     if ($USE_STDIN)
     {
 	$line = <>;
+	$line = <> if ($HEADER_FROM_FILE);
     }
     else
     {
@@ -102,14 +109,15 @@ sub printResults
     my $length = @$head;
     $length = @$body if (@$body > $length);
     my $i;
+    my $useHead = ($HEAD_FILE or $HEADER_FROM_FILE);
     for ( $i = 0; $i < $length; $i++)
     {
 	print $i + 1,":\t" if ($PRINT_LINE_NUMBERS);
-	if (exists $$head[$i] and $HEAD_FILE)
+	if (exists $$head[$i] and $useHead)
 	{
 	    print $$head[$i],headerSpace($$head[$i]) if (exists $$head[$i]);
 	}
-	elsif ($HEAD_FILE)
+	elsif ($useHead)
 	{
 	    print $EMPTY_HEAD_VALUE,headerSpace($EMPTY_HEAD_VALUE);
 	}
