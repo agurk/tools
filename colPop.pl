@@ -49,6 +49,7 @@ sub generateHeader
 	}
 	else
 	{
+	    # will try and find filename in args
 	    $line = <>;
 	}
 	chomp $line;
