@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Getopt::Long;
+Getopt::Long::Configure('pass_through');
 
 my $SEPERATOR = ';';
 my $HEAD_FILE = '';
@@ -25,12 +26,10 @@ sub processArgs
 		'use-header' => \$HEADER_FROM_FILE
 	      ) or die "Incorrect Arguments\n";
 
-    if ($#ARGV > 0)
+    if ($#ARGV >= 1)
     {
-
-	print "not using std_in\n";
         $USE_STDIN = 0;
-        $INPUT_FILE = $ARGV[0];
+        $INPUT_FILE = $ARGV[1];
     }
 }
 
@@ -39,8 +38,7 @@ sub generateHeader
     my @output;
     if ($HEADER_FROM_FILE)
     {
-	#$HEAD_FILE = $INPUT_FILE ;
-	print "Here:$INPUT_FILE\n";
+	$HEAD_FILE = $INPUT_FILE ;
     }
     if ($HEAD_FILE)
     {
@@ -69,12 +67,10 @@ sub generateBody
     else
     {
 	open (my $fh, '<', $INPUT_FILE) or die "Cannot open $INPUT_FILE\n";
-
 	if ($HEADER_FROM_FILE)
 	{
 	    # Throw away the first line
 	    $line = <$fh>;
-	    print "throwing\n";
 	}
 
 	$line = <$fh>;
