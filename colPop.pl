@@ -121,7 +121,6 @@ sub printResults
 sub main
 {
     processArgs();
-    print $INPUT_FILE,"\n";
     my $head = generateHeader();
     my $body = generateBody();
     printResults($head, $body);
