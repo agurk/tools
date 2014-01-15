@@ -24,17 +24,17 @@ sub getFileList
     my @files = <$OPTIONS{'d'}/*>;
     foreach (@files)
     {
-	chomp ($_);
-	# ignore dirs
-	next if ( -d $_);
-	#
-	#open(*FILE,$_) or next;
-	#my $ctx = Digest::MD5->new;
-	#$ctx->addfile(*FILE);
-	# assuming using filename as key will result in no collisions
-	#$currentFiles{$_} = $ctx->hexdigest;
-	#close(*FILE);
-	$currentFiles{$_} = 1;
+        chomp ($_);
+        # ignore dirs
+        next if ( -d $_);
+        #
+        #open(*FILE,$_) or next;
+        #my $ctx = Digest::MD5->new;
+        #$ctx->addfile(*FILE);
+        # assuming using filename as key will result in no collisions
+        #$currentFiles{$_} = $ctx->hexdigest;
+        #close(*FILE);
+        $currentFiles{$_} = 1;
     }
     return \%currentFiles;
 }
@@ -44,24 +44,27 @@ sub areEqual
     my ($one, $two) = @_;
     foreach (keys %$one)
     {
-	return 0 unless ($$two{$_});
+        return 0 unless ($$two{$_});
     }
     foreach (keys %$two)
     {
-	return 0 unless ($$one{$_});
+        return 0 unless ($$one{$_});
     }
     return 1;
 }
 
+
+# Modes:
+# 0:  full
+# 1:  delta
 sub details
 {
     my ($fileList, $newFileList) = @_;
-    my $details = "File listing:\n";
-    foreach (keys %$fileList) { $details .= $_."\n" }
-    $details .= "\n New Files:\n";
-    foreach (keys %$newFileList) { $details .= $_."\n" unless (defined $$fileList{$_})  }
-    $details .= "\n Deleted Files:\n";
-    foreach (keys %$fileList) { $details .= $_."\n" unless (defined $$newFileList{$_})  }
+    my $details = '=== Listing: ' . localtime() . "===\n\n";
+    foreach (keys %$fileList) { $details .= $_."\n" if (defined $$newFileList{$_})  }
+    foreach (keys %$newFileList) { $details .= '+ ' . $_."\n" unless (defined $$fileList{$_})  }
+    foreach (keys %$fileList) { $details .= '- ' . $_."\n" unless (defined $$newFileList{$_})  }
+    $details .= "\n----------------------------------------\n\n";
     return $details;
 }
 
@@ -77,18 +80,19 @@ sub main
 {
     startup();
     my $fileList = getFileList();
+    print details($fileList, $fileList);
     while (1)
     {
-	my $newFileList = getFileList();
-	unless (areEqual $newFileList,$fileList)
-	{
-	    # Different!
-	    my $details = details($fileList, $newFileList);
-	    #print $details,"\n";
-	    emailDetails($details) if (defined ($OPTIONS{'e'}));
-	    $fileList = $newFileList;
-	}
-	sleep $OPTIONS{'s'};
+        my $newFileList = getFileList();
+        unless (areEqual $newFileList,$fileList)
+        {
+            # Different!
+            my $details = details($fileList, $newFileList);
+            print $details,"\n";
+            emailDetails($details) if (defined ($OPTIONS{'e'}));
+            $fileList = $newFileList;
+        }
+        sleep $OPTIONS{'s'};
     }
 }
 
