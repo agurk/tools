@@ -4,6 +4,9 @@ CONFIG_FILE="connect_config.sh"
 
 #### CONFIG FILE ##########################################
 #### There should be a file for the config in the format ##
+#
+# AUTH_FILE="/path/to/file"
+#
 # declare -A SERVERS
 # SERVERS[EXAMPLE]=user@server.com
 #
