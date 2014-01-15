@@ -1,13 +1,22 @@
 #!/usr/bin/bash
 
-AUTH_FILE="/path/to/file"
+CONFIG_FILE="connect_config.sh"
 
+#### CONFIG FILE ##########################################
+#### There should be a file for the config in the format ##
+# declare -A SERVERS
+# SERVERS[EXAMPLE]=user@server.com
+#
+# declare -A AUTHFILES
+# AUTHFILES[EXAMPLE]=AUTH_FILE
+###########################################################
 
-declare -A SERVERS
-#SERVERS[EXAMPLE]=user@server.com
+if [[ -e $CONFIG_FILE ]]; then
+    source $CONFIG_FILE;
+else
+    echo "Missing config file: $CONFIG_FILE"
+fi
 
-declare -A AUTHFILES
-#AUTHFILES[EXAMPLE]=AUTH_FILE
 
 ENV=$1
 
