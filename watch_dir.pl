@@ -27,6 +27,8 @@ sub getFileList
         chomp ($_);
         # ignore dirs
         next if ( -d $_);
+	$_ =~ s/^$OPTIONS{'d'}//g;
+	$_ =~ s/^\/+//;
         #
         #open(*FILE,$_) or next;
         #my $ctx = Digest::MD5->new;
@@ -61,9 +63,16 @@ sub details
 {
     my ($fileList, $newFileList) = @_;
     my $details = '=== Listing: ' . localtime() . "===\n\n";
-    foreach (keys %$fileList) { $details .= $_."\n" if (defined $$newFileList{$_})  }
-    foreach (keys %$newFileList) { $details .= '+ ' . $_."\n" unless (defined $$fileList{$_})  }
-    foreach (keys %$fileList) { $details .= '- ' . $_."\n" unless (defined $$newFileList{$_})  }
+    if ( keys %$fileList or keys %$newFileList )
+    {
+    	foreach (keys %$fileList) { $details .= $_."\n" if (defined $$newFileList{$_})  }
+    	foreach (keys %$newFileList) { $details .= '+ ' . $_."\n" unless (defined $$fileList{$_})  }
+    	foreach (keys %$fileList) { $details .= '- ' . $_."\n" unless (defined $$newFileList{$_})  }
+    }
+    else
+    {
+	$details .= "  --empty--\n";
+    }
     $details .= "\n----------------------------------------\n\n";
     return $details;
 }
