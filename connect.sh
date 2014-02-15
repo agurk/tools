@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-CONFIG_FILE="connect_config.sh"
+CONFIG_FILE="$HOME/tools/connect_config.sh"
 
 #### CONFIG FILE ##########################################
 #### There should be a file for the config in the format ##
