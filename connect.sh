@@ -33,18 +33,12 @@ usage: connect.sh <env-name>
 
 EOF
     echo Configured environments are:
-    paste <(
-    for k in "${!SERVERS[@]}"
-    do
-	echo "$k"
-    done
-    ) <(
-    for k in "${!SERVERS[@]}"
-    do
-        echo "${SERVERS[$k]}"
-    done
 
-    )
+    for k in ${!SERVERS[@]}
+    do
+	echo "$k,${SERVERS[$k]}"
+    done | sort | awk -F, '{ printf "  %-12s%s\n", $1, $2 }'
+
 }
 
 if [[ -z $ENV ]]
